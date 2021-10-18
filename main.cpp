@@ -4,6 +4,7 @@
 #define MAXPOINTS 300
 GLint point[MAXPOINTS][2];
 int pointnum = 0;
+int rubberband = 0;
 
 void display(void)
 {
@@ -42,6 +43,8 @@ void mouse(int button, int state, int x, int y) {
                 glVertex2iv(point[pointnum]);
                 glEnd();
                 glFlush();
+
+                rubberband = 0;
             } else { }
             if (pointnum < MAXPOINTS - 1) pointnum++;
             break;
@@ -52,6 +55,34 @@ void mouse(int button, int state, int x, int y) {
         default:
             break;
     }
+}
+
+void motion(int x, int y)
+{
+    static GLint savepoint[2];
+
+    glEnable(GL_COLOR_LOGIC_OP);
+    glLogicOp(GL_INVERT);
+
+    glBegin(GL_LINES);
+
+    if (rubberband) {
+        glVertex2iv(point[pointnum - 1]);
+        glVertex2iv(savepoint);
+    }
+    glVertex2iv(point[pointnum - 1]);
+    glVertex2i(x, y);
+
+    glEnd();
+    glFlush();
+
+    glLogicOp(GL_COPY);
+    glDisable(GL_COLOR_LOGIC_OP);
+    
+    savepoint[0] = x;
+    savepoint[1] = y;
+
+    rubberband = 1;
 }
 
 void init(void) {
@@ -67,6 +98,7 @@ int main(int argc, char *argv[]) {
     glutDisplayFunc(display);
     glutReshapeFunc(resize);
     glutMouseFunc(mouse);
+    glutMotionFunc(motion);
     init();
     glutMainLoop();
     return 0;
