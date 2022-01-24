@@ -6,7 +6,6 @@
 #include <filesystem>
 #include <GL/glut.h>
 
-
 inline void mkdir() {
     if (! std::filesystem::exists("OBJ"))
         std::filesystem::create_directory("OBJ");
@@ -23,7 +22,16 @@ void splitter(std::ifstream& ifs, std::string source_dir) {
     // std::stringstream   ss("");
     std::ofstream       ofs;
     bool                first_object = true;
+
+    int biasV   = 1;
+    int biasVT  = 1;
+    int biasVN  = 1;
     while (getline(ifs, line)) {
+        // BIAS
+        if (line.substr(0,2) == "v ") biasV++;
+        if (line.substr(0,3) == "vt ") biasVT++;
+        if (line.substr(0,3) == "vn ") biasVN++;
+        // -- BIAS
         if (line[0] == '#') continue;
         if (line.substr(0,6) == "mtllib") {
             std::ifstream mtl(source_dir + "/" + line.substr(7));
@@ -37,13 +45,19 @@ void splitter(std::ifstream& ifs, std::string source_dir) {
         if (line[0] == 'o') {
             if (first_object) {
                 object == line.substr(2);
-                ofs.open(object);
+                ofs.open(object + ".obj");
+                ofs << "biasV " << biasV << std::endl;
+                ofs << "biasVT " << biasVT << std::endl;
+                ofs << "biasVN " << biasVN << std::endl;
                 first_object = ! first_object;
             } else {
                 ofs.close();
                 // ----------- Initialize for next object.
                 object = line.substr(2);
-                ofs.open(object);
+                ofs.open(object + ".obj");
+                ofs << "biasV " << biasV << std::endl;
+                ofs << "biasVT " << biasVT << std::endl;
+                ofs << "biasVN " << biasVN << std::endl;
             }
         } else {
             if (line == "") {
