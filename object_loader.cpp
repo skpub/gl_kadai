@@ -57,4 +57,3 @@ void reader(object *obj, std::string filename) {
         }
     }
 }
-

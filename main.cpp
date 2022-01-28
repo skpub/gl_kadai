@@ -1,7 +1,10 @@
 #include <vector>
 #include <iostream>
+#include <filesystem>
 #include <fstream>
 #include <GL/glut.h>
+#include <fstream>
+#include <memory>
 #include "object_loader.hpp"
 #include "material_loader.hpp"
 #include <png++/png.hpp>
@@ -9,8 +12,10 @@
 using std::cout;
 using std::endl;
 
-object obj;
+std::vector<object> obj_s;
 material_box mtlbox;
+png::image<png::rgba_pixel> image;
+std::ifstream texture;
 
 GLdouble vertex[][3] = {
     {0.0, 0.0, 0.0},
@@ -79,18 +84,19 @@ void display(void)
 
     glLoadIdentity();
 
-    gluLookAt(40.0, 16.0, 40.0, 0.0, 17.0, 0.0, 0.0, 1.0, 0.0);
+    gluLookAt(50.0, 29.0, 50.0, 0.0, 22.0, 0.0, 0.0, 1.0, 0.0);
 
     glRotated((double)r, 0.0, 1.0, 0.0);
 
     glBegin(GL_TRIANGLES);
-    for (int j = 0; j < obj.polygon.size(); j++) {
-    // for (int j = 0; j < 100; j++) {
-        glNormal3dv(obj.normal[obj.normal_num[j].x].data());
-        glVertex3dv(obj.vertex[obj.polygon[j].x].data());
-        glVertex3dv(obj.vertex[obj.polygon[j].y].data());
-        glVertex3dv(obj.vertex[obj.polygon[j].z].data());
-    } 
+    for (object obj: obj_s) {
+        for (int j = 0; j < obj.polygon.size(); j++) {
+            glNormal3dv(obj.normal[obj.normal_num[j].x].data());
+            glVertex3dv(obj.vertex[obj.polygon[j].x].data());
+            glVertex3dv(obj.vertex[obj.polygon[j].y].data());
+            glVertex3dv(obj.vertex[obj.polygon[j].z].data());
+        } 
+    }
 
     glEnd();
 
@@ -155,11 +161,16 @@ void init(void) {
 
 int main(int argc,char *argv[])
 {
-    reader(&obj, "OBJ/Body_Circle.obj");
+    for (auto i: std::filesystem::directory_iterator("OBJ")) {
+        if (i.path().filename().extension() == ".obj") {
+            object tmp;
+            reader(&tmp, "OBJ/" + i.path().filename().generic_string());
+            cout << i.path().filename().generic_string() << endl;
+            obj_s.emplace_back(std::move(tmp));
+        }
+    }
     material_reader(&mtlbox, "OBJ/TONG_KING_TOWER.mtl");
 
-    cout << mtlbox.box["Material.001"].illum << endl;
-    
     glutInitWindowPosition(100,100);
     glutInitWindowSize(1920,1080);
     glutInit(&argc,argv);
