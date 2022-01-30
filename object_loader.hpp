@@ -5,7 +5,7 @@
 #include <vector>
 #include <array>
 #include <sstream>
-#include <png++/png.hpp>
+// #include <png++/png.hpp>
 
 struct index_mgl {
     int x; int y; int z;

@@ -44,7 +44,7 @@ void splitter(std::ifstream& ifs, std::string source_dir) {
         }
         if (line[0] == 'o') {
             if (first_object) {
-                object == line.substr(2);
+                object = line.substr(2);
                 ofs.open(object + ".obj");
                 ofs << "biasV " << biasV << std::endl;
                 ofs << "biasVT " << biasVT << std::endl;

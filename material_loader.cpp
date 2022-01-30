@@ -44,6 +44,9 @@ void material_reader(material_box *mt, std::string filename) {
             clear_material(&current_mtl);
         }
     }
+    // std::cout << current_mtl_name << std::endl;
+    mt->box[current_mtl_name] = current_mtl;
+    clear_material(&current_mtl);
 }
 
 void clear_material(material* mt) {
