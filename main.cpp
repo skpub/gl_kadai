@@ -49,13 +49,13 @@ void display(void)
     glEnable(GL_TEXTURE_2D);
     // glBindTexture(GL_TEXTURE_2D, _texname[0]);
     for (object obj: obj_s) {
-        // if (mtlbox.box[obj.mtl].map_Kd != "") {
+        if (mtlbox.box[obj.mtl].map_Kd != "") {
             glTexImage2D(
                 GL_TEXTURE_2D, 0, GL_RGB,
                 WIDTH, HEIGHT, 0,
                 GL_RGB, GL_UNSIGNED_BYTE, img_box[img_index_box[mtlbox.box[obj.mtl].map_Kd]]
             );
-        // }
+        }
         glBegin(GL_TRIANGLES);
         for (int j = 0; j < obj.polygon.size(); j++) {
             glNormal3dv(obj.normal[obj.normal_num[j].x].data());
@@ -70,8 +70,8 @@ void display(void)
             glTexCoord2dv(obj.texture[obj.texture_num[j].z].data()),
             glVertex3dv(obj.vertex[obj.polygon[j].z].data());
         } 
+        glEnd();
     }
-    glEnd();
 
     glDisable(GL_TEXTURE_2D);
 
@@ -152,7 +152,6 @@ void init(void) {
             //         tmp_img[i][j][2] = tmp_source[i][j].blue;
             //     }
             // }
-            cout << "capa: " <<  img_box.capacity() << endl; 
             for (int i = 0; i < HEIGHT; i++) {
                 for (int j = 0; j < WIDTH; j++) {
                     img_box[tex_img_counter][i][j][0] = tmp_source[i][j].red;
@@ -177,7 +176,7 @@ int main(int argc,char *argv[])
             obj_s.emplace_back(std::move(tmp));
         }
     }
-    material_reader(&mtlbox, "OBJ/TONG_KING_TOWER.mtl");
+    material_reader(&mtlbox, "OBJ/TONG_KING_TOWER2.mtl");
     // for (auto i: mtlbox.box) {
     //     cout << "*--*" << i.first << "*--*" << endl;
     //     cout << i.second.map_Kd << endl;

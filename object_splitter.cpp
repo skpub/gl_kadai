@@ -70,7 +70,7 @@ void splitter(std::ifstream& ifs, std::string source_dir) {
 
 
 int main(void) {
-    std::ifstream ifs("TONGKING/TONG_KING_TOWER.obj");
+    std::ifstream ifs("TONGKING/TONG_KING_TOWER2.obj");
     splitter(ifs, std::filesystem::current_path().concat("/TONGKING"));
     return 0;
 }
